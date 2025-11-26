@@ -30,6 +30,8 @@ class _ExpensesState extends State<Expenses> {
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      useSafeArea:
+          true, // otomatis ga menutupi notch tampilan kamera, gausa ribet nambah padding manual
       isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpenses(onAddExpense: _addExpense),
@@ -68,6 +70,9 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width; //dapatkan width layar
+    final height = MediaQuery.of(context).size.height; //dapatkan height layar
+
     Widget mainContent = const Center(
       child: Text("No Expenses found. "),
     );
@@ -87,14 +92,29 @@ class _ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _registeredExpenses),
-          Expanded(
-            child: mainContent,
-          ),
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _registeredExpenses),
+                Expanded(
+                  child: mainContent,
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: Chart(expenses: _registeredExpenses),
+                ),
+                Expanded(
+                  child: mainContent,
+                ),
+              ],
+            ),
     );
   }
 }
+
+// NOTES : kalau row widhth infinity jadi expanded biar bisa bagi ruang
+// NOTES : kalau column height infinity jadi expanded biar bisa bagi ruang
+// NOTES : gunakan mediaquery untuk mendapatkan ukuran layar
